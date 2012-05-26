@@ -177,7 +177,7 @@ cdef class CoreDef:
 		func = <void (*)(cretro.retro_environment_t)>cdl.dlsym(self._ptr, "retro_set_environment")
 		func(function)
 	cdef void cretro_set_video_refresh(self,cretro.retro_video_refresh_t function):
-		func = <void (*)(cretro.retro_video_refresh_t)>cdl.dlsym(self._ptr, "retro_set_environment")
+		func = <void (*)(cretro.retro_video_refresh_t)>cdl.dlsym(self._ptr, "retro_set_video_refresh")
 		func(function)
 	cdef void cretro_set_audio_sample(self,cretro.retro_audio_sample_t function):
 		func = <void (*)(cretro.retro_audio_sample_t)>cdl.dlsym(self._ptr, "retro_set_audio_sample")
@@ -321,10 +321,10 @@ cdef class CoreDef:
 		return retro_system_av_info(geometry,timing)
 
 	def retro_init(self):
-		self.cretro_init
+		self.cretro_init()
 
 	def retro_deinit(self):
-		self.cretro_deinit
+		self.cretro_deinit()
 
 	def retro_set_environment(self, function):
 		global environment_func
