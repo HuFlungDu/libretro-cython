@@ -175,6 +175,23 @@ class EmulatedSystem(W.LowLevelWrapper):
                         raise EX.GameAlreadyLoaded("This method requires that no game be loaded!")
 
         # Python wrapper functions that handle all the ctypes callback casting.
+        def set_environment_cb(self,callback):
+                """
+                Sets the environment callback.
+
+                Environment callback. Gives implementations a way of performing uncommon tasks. Extensible.
+
+                The callback should accept the following parameters:
+
+                        "command" is an int16 that tells it what command to use, one of globals.ENVIRONMENT_*.
+
+                        "data" is an object which the implementation will create based on the value of "command"
+
+                The callback should return nothing.
+
+                The "data" pararmeter is currently unimplemented and just returns a wrapper around a void *
+                """
+                self._lib.retro_set_environment(callback)
 
         def set_video_refresh_cb(self, callback):
                 """
@@ -209,6 +226,20 @@ class EmulatedSystem(W.LowLevelWrapper):
                 The callback should return nothing.
                 """
                 self._lib.retro_set_audio_sample(callback)
+
+        def set_audio_sample_batch_cb(self,callback):
+                """
+                Sets the callback that will handle updated batch audio frames.
+
+                The callback should accept the following parameters:
+
+                        "data" is an array of int16 pairs arranged in the format [l,r,l,r,...]
+
+                        "frames" is the number of frames. The size of data is 2*frames
+
+                The callback should return nothing.
+                """
+                self._lib.retro_set_audio_sample_batch(callback)
 
         def set_input_poll_cb(self, callback):
                 """
@@ -488,6 +519,7 @@ class EmulatedSystem(W.LowLevelWrapper):
                 """
                 Release all resources associated with this library instance.
                 """
-                W.LowLevelWrapper.close(self)
+                if W:
+                        W.LowLevelWrapper.close(self)
                 if self._libname in _libretro_registry:
                         _libretro_registry.remove(self._libname)

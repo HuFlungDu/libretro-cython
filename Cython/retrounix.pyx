@@ -104,7 +104,7 @@ cdef size_t callaudiosamplebatch(const_int16_t_pointer data, size_t frames):
 	if audio_sample_batch_func:
 		datawrapper = data_array("ushort",frames)
 		datawrapper._ptr = unconst_int16_t_pointer(data)
-		return audio_sample_batch_func(datawrapper,frames)
+		return audio_sample_batch_func(datawrapper.get_numpy(),frames)
 
 cdef void callinputpoll():
 	global input_poll_func
