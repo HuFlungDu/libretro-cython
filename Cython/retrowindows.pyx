@@ -1,4 +1,4 @@
- '''
+'''
  * ----------------------------------------------------------------------------
  * "THE BEER-WARE LICENSE" (Revision 42):
  * <jbaldwin8880@gmail.com> wrote this file. As long as you retain this notice you
@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------
 '''
 
-cimport cdl
+cimport cwindows
 cimport cretro
 from numpy cimport ndarray, NPY_USHORT, NPY_SHORT, NPY_UBYTE, NPY_BYTE,NPY_UINT,NPY_INT,npy_intp, import_array
 import_array()
@@ -161,6 +161,8 @@ cdef class CoreDef:
 	cdef void *_ptr
 	
 	def __cinit__(self,libname):
+
+
 		self._ptr = cdl.dlopen(libname,1)
 
 		self.cretro_set_environment(callenvironment)
