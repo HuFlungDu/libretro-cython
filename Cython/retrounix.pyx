@@ -271,10 +271,6 @@ cdef class CoreDef:
 									  <const_void_pointer>(<const_char_pointer>gameinfo.data),
 									  gameinfo.size,
 									  <const_char_pointer>gameinfo.meta)
-		'''info.path = <const_char_pointer>gameinfo.path
-		info.data = <const_void_pointer>(<const_char_pointer>gameinfo.data)
-		info.size = gameinfo.size
-		info.meta = <const_char_pointer>gameinfo.meta'''
 		self.cretro_load_game(&info)
 
 	def retro_cheat_reset(self):
