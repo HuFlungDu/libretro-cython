@@ -80,34 +80,40 @@ cdef class data_array:
 cdef bool callenvironment(unsigned cmd, void *data):
 	global environment_func
 	cdef void_pointer_wrapper datawrapper
-	datawrapper = void_pointer_wrapper()
-	datawrapper._ptr = data
-	return environment_func(cmd, datawrapper)
+	if environment_func:
+		datawrapper = void_pointer_wrapper()
+		datawrapper._ptr = data
+		return environment_func(cmd, datawrapper)
 
 cdef void callvideorefresh(const_void_pointer data, unsigned width, unsigned height, size_t pitch):
 	global video_refresh_func
 	cdef data_array datawrapper
-	datawrapper = data_array("ushort",height*width)
-	datawrapper._ptr = unconst_void_pointer(data)
-	video_refresh_func(datawrapper,width,height)
+	if video_refresh_func:
+		datawrapper = data_array("ushort",height*width)
+		datawrapper._ptr = unconst_void_pointer(data)
+		video_refresh_func(datawrapper.get_numpy(),width,height,pitch)
 
 cdef void callaudiosample(int16_t left, int16_t right):
 	global audio_sample_func
-	audio_sample_func(left,right)
+	if audio_sample_func:
+		audio_sample_func(left,right)
 
 cdef size_t callaudiosamplebatch(const_int16_t_pointer data, size_t frames):
 	global audio_sample_batch_func
 	cdef data_array datawrapper
-	datawrapper = data_array("ushort",frames)
-	datawrapper._ptr = unconst_int16_t_pointer(data)
-	return audio_sample_batch_func(datawrapper,frames)
+	if audio_sample_batch_func:
+		datawrapper = data_array("ushort",frames)
+		datawrapper._ptr = unconst_int16_t_pointer(data)
+		return audio_sample_batch_func(datawrapper,frames)
 
 cdef void callinputpoll():
 	global input_poll_func
-	input_poll_func()
+	if input_poll_func:
+		input_poll_func()
 cdef int16_t callinputstate(unsigned port, unsigned device, unsigned index, unsigned id):
 	global input_state_func
-	return input_state_func(port,device,index,id)
+	if input_state_func:
+		return input_state_func(port,device,index,id)
 	
 class retro_message(object):
 	def __init__(self,msg,frames):
@@ -315,6 +321,9 @@ cdef class CoreDef:
 		timing = retro_system_timing(info.timing.fps,
 							   info.timing.sample_rate)
 		return retro_system_av_info(geometry,timing)
+
+	def retro_run(self):
+		self.cretro_run()
 
 	def retro_init(self):
 		self.cretro_init()
