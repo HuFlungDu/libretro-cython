@@ -1,0 +1,11 @@
+Cython extension for libretro. Written by HuFlungDu (Josiah Baldwin). Libretro.h by TheMaister (Hans-Kristian Arntzen). Currently only runs in linux.
+
+Build instructions:
+	requires:
+		numpy
+		cython
+		python 2.7
+		python distutils
+
+	To Build:
+		python2 setup.py build_ext

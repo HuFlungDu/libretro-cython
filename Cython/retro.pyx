@@ -1,3 +1,12 @@
+ '''
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <jbaldwin8880@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return Josiah Baldwin
+ * ----------------------------------------------------------------------------
+'''
+
 cimport cdl
 cimport cretro
 from numpy cimport ndarray, NPY_USHORT, NPY_SHORT, NPY_UBYTE, NPY_BYTE,NPY_UINT,NPY_INT,npy_intp, import_array
