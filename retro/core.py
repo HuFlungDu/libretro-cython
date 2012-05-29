@@ -141,7 +141,7 @@ class EmulatedSystem(W.LowLevelWrapper):
                 if mem_size == 0:
                         return None
 
-                return mem_data
+                return mem_data.tostring()
 
         def _string_to_memory(self, data, mem_type):
                 """
@@ -158,7 +158,7 @@ class EmulatedSystem(W.LowLevelWrapper):
                                                 mem_size, mem_type, len(data),
                                         )
                                 )
-                mem_data.put(range(mem_size),list(data))
+                mem_data.put(range(mem_size),map(ord,data))
 
         def _require_game_loaded(self):
                 """
@@ -212,7 +212,6 @@ class EmulatedSystem(W.LowLevelWrapper):
                 """
                 self._lib.retro_set_video_refresh(callback)
 
-        # TODO: this callback's batch-processing cousin
         def set_audio_sample_cb(self, callback):
                 """
                 Sets the callback that will handle updated audio frames.
@@ -408,6 +407,9 @@ class EmulatedSystem(W.LowLevelWrapper):
                         raise EX.RetroException("problem in serialize")
                 return buf
 
+        def get_save_data(self):
+                return self._memory_to_string(MEMORY_SAVE_RAM)
+
         def unserialize(self, state):
                 """
                 Restores the state of the emulated console from a string.
@@ -511,7 +513,6 @@ class EmulatedSystem(W.LowLevelWrapper):
         def get_library_info(self):
                 """
                 Return the name and version numbers (major, minor) of the library.
-                WARNING: currently just reports major API version.  TODO: fix
                 """
                 return self._lib.retro_get_system_info()
 
@@ -521,5 +522,5 @@ class EmulatedSystem(W.LowLevelWrapper):
                 """
                 if W:
                         W.LowLevelWrapper.close(self)
-                if self._libname in _libretro_registry:
-                        _libretro_registry.remove(self._libname)
+                        if self._libname in _libretro_registry:
+                                _libretro_registry.remove(self._libname)

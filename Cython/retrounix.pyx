@@ -10,6 +10,7 @@
 cimport cdl
 cimport cretro
 from numpy cimport ndarray, NPY_USHORT, NPY_SHORT, NPY_UBYTE, NPY_BYTE,NPY_UINT,NPY_INT,npy_intp, import_array
+from cython.operator cimport dereference as deref
 import_array()
 
 cdef extern from "libretro.h":
@@ -77,10 +78,41 @@ cdef class data_array:
 		numpyarray = PyArray_SimpleNewFromData(1, &size, dtype, self._ptr)
 		return numpyarray
 
+ENVIRONMENT_SET_ROTATION  = 1
+ENVIRONMENT_GET_OVERSCAN  = 2
+ENVIRONMENT_GET_CAN_DUPE  = 3
+ENVIRONMENT_GET_VARIABLE  = 4
+ENVIRONMENT_SET_VARIABLES = 5
+ENVIRONMENT_SET_MESSAGE   = 6
+
 cdef bool callenvironment(unsigned cmd, void *data):
 	global environment_func
 	cdef void_pointer_wrapper datawrapper
 	if environment_func:
+		if cmd == ENVIRONMENT_SET_ROTATION:
+			return environment_func(cmd, deref(<unsigned *>data))
+
+		elif cmd == ENVIRONMENT_GET_OVERSCAN:
+			return environment_func(cmd, deref(<bint *>data))
+
+		elif cmd == ENVIRONMENT_GET_CAN_DUPE:
+			return environment_func(cmd, deref(<bint *>data))
+
+		elif cmd == ENVIRONMENT_GET_VARIABLE:
+			var = retro_variable(deref(<cretro.retro_variable*>data).key,
+								  deref(<cretro.retro_variable*>data).value)
+			return environment_func(cmd, var)
+
+		elif cmd == ENVIRONMENT_SET_VARIABLES:
+			var = retro_variable(deref(<cretro.retro_variable*>data).key,
+								  deref(<cretro.retro_variable*>data).value)
+			return environment_func(cmd, var)
+
+		elif cmd == ENVIRONMENT_SET_MESSAGE:
+			msg = retro_variable(deref(<cretro.retro_message*>data).msg,
+								  deref(<cretro.retro_variable*>data).frames)
+			return environment_func(cmd, msg)
+
 		datawrapper = void_pointer_wrapper()
 		datawrapper._ptr = data
 		return environment_func(cmd, datawrapper)
